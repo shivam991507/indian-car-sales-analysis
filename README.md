@@ -28,7 +28,7 @@ For each brand:
   - Q3 = Jul + Aug + Sep
   - Q4 = Oct + Nov + Dec
 - Annual totals are calculated as the sum of all 12 months.
-- Source-data zeros are preserved exactly; they are **not replaced by 1**.
+- Source-data zeros are preserved exactly in the reproducible version.
 
 ## Repository structure
 
@@ -51,6 +51,8 @@ indian-car-sales-analysis/
 │       ├── quarterly_sales_2019_2021.csv
 │       ├── yearly_sales_2019_2021.csv
 │       └── market_totals.csv
+├── docs/
+│   └── data_quality_notes.md
 └── figures/
     ├── annual_sales_by_brand.png
     └── quarterly_market_sales.png
@@ -58,30 +60,41 @@ indian-car-sales-analysis/
 
 ## Original academic submission
 
-The repository includes the **original academic report** in `report/original_academic_report.pdf` and a transcribed/repository-friendly version of the R code shown in its appendix in `R/original_report_code.R`. These files preserve the project as it was originally presented and support the project description used on the resume.
+The **[original academic report](report/original_academic_report.pdf)** is preserved unchanged. It contains the original monthly and quarterly tables, graphs, hypothesis tests, ANOVA calculations, interpretations, conclusion, and appendix screenshots of the R code.
 
-The original report is kept unchanged. A later reproducibility check found some manual/transcription differences between the report tables and the supplied Kaggle CSV; these are documented transparently in `docs/data_quality_notes.md`. The cleaned scripts regenerate the derived data directly from the source values.
+A repository-friendly reconstruction of the appendix code is available in **[R/original_report_code.R](R/original_report_code.R)**.
 
-## Key results
+### Conclusions reported in the original project
 
-### Overall market total
+The submitted report concluded that:
 
-Across the 14 brands in the dataset, total recorded sales were:
+- Brand-wise sales differed significantly in both 2019 and 2021.
+- Maruti Suzuki and Hyundai dominated sales relative to the other brands.
+- Quarter-wise variation was not significant in 2019, but was significant in 2021.
+- The report interpreted the comparison as showing pandemic-related changes in brand-level sales, highlighting declines for brands such as Hyundai, Honda and Ford and growth for Kia and MG.
+
+These are the conclusions from the original academic submission and are retained because they are the basis of the project description used on the resume.
+
+## Reproducibility check
+
+A later reconstruction was carried out directly from the supplied Kaggle CSV so that the project could be rerun from raw monthly values. During that process, a few manual/transcription differences were found between the report tables and the raw data. They are documented in **[docs/data_quality_notes.md](docs/data_quality_notes.md)** rather than altering the original PDF.
+
+### Overall total from the reconstructed source data
+
+Across the 14 brands:
 
 | Year | Total units |
 |---|---:|
 | 2019 | 2,897,215 |
 | 2021 | 3,073,588 |
 
-This is an increase of approximately **6.1%** in the combined total for these brands. Therefore, the data do **not** support a blanket statement that total sales across the selected brands were lower in 2021. The changes were strongly brand-specific.
+The combined total is about **6.1% higher** in 2021, so the reconstructed data support a **brand-specific change** interpretation rather than a blanket decline across all selected brands.
 
 ![Annual sales by brand](figures/annual_sales_by_brand.png)
 
-Examples of large brand-level changes between 2019 and 2021 include strong increases for Tata, Kia, MG and Nissan, while Ford and Honda recorded substantial declines.
-
 ### Pearson chi-square tests
 
-Using the source values directly:
+Using the reconstructed source values:
 
 | Test | Chi-square | df | Result |
 |---|---:|---:|---|
@@ -89,24 +102,22 @@ Using the source values directly:
 | Brand x Quarter, 2019 | 105,473.74 | 39 | p < 0.001 |
 | Brand x Quarter, 2021 | 53,411.02 | 39 | p < 0.001 |
 
-These tests show strong association between the distribution of recorded sales and brand/year or brand/quarter. Because the observations are aggregate sales counts, the tests should be interpreted as descriptive association rather than a causal estimate of the pandemic's effect.
+These show strong association between the distribution of recorded sales and brand/year or brand/quarter.
 
 ### Two-way ANOVA without replication
-
-The quarterly totals were analyzed using brand and quarter as factors.
 
 | Year | Brand effect | Quarter effect |
 |---|---|---|
 | 2019 | F = 189.02, p < 0.001 | F = 2.70, p = 0.0588 |
 | 2021 | F = 105.69, p < 0.001 | F = 3.37, p = 0.0280 |
 
-Brand-to-brand differences are highly significant in both years. Quarter-to-quarter variation is not significant at the 5% level in 2019, but it is significant in 2021.
+Brand-to-brand differences are significant in both years. Quarter-to-quarter variation is not significant at the 5% level in 2019, but it is significant in 2021.
 
 ![Quarterly market sales](figures/quarterly_market_sales.png)
 
 ## Reproducibility
 
-The analysis uses base R.
+The cleaned workflow uses base R.
 
 1. Download the original Kaggle CSV.
 2. Save it as `data/raw/car_sales_india_2019_2021.csv`.
@@ -118,13 +129,13 @@ source("R/02_statistical_analysis.R")
 source("R/03_visualization.R")
 ```
 
-The first script recreates all processed monthly, quarterly and annual tables from the original monthly data.
+The first script recreates the processed monthly, quarterly and annual tables from the original monthly data.
 
 ## Methodological notes
 
-- The original source data contain some genuine zero-sales months for newer/exiting brands. These are kept as zero in the cleaned analysis.
-- The two-way ANOVA uses one aggregated observation per Brand x Quarter cell. Therefore, a separate interaction effect cannot be estimated in this design.
-- The project compares two calendar years and does not by itself establish that COVID-19 caused every observed change. Brand launches, exits, supply constraints and other market factors may also contribute.
+- Genuine zero-sales months in the source data are preserved in the cleaned analysis.
+- The two-way ANOVA has one aggregated observation per Brand x Quarter cell, so a separate interaction effect cannot be estimated in this design.
+- This is a two-year observational comparison and does not by itself establish that COVID-19 caused every observed change; launches, exits, supply constraints and other market factors may also contribute.
 
 ## Tools
 
